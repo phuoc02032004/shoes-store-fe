@@ -22,6 +22,14 @@ const Navbar = () => {
     Router.push('/signin');
   };
 
+  const handleSignUp = () => {
+    Router.push('/signup');
+  }
+
+  const handleCart = () => {
+    Router.push('/cart');
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100">
       <nav className="container mx-auto px-4 h-20">
@@ -71,7 +79,7 @@ const Navbar = () => {
               <button className="w-6 h-6 text-primary">
                 <Heart className="w-full h-full" strokeWidth={1.5} />
               </button>
-              <button className="w-6 h-6 text-primary">
+              <button  onClick={handleCart} className="w-6 h-6 text-primary">
                 <ShoppingBag className="w-full h-full" strokeWidth={1.5} />
               </button>
             </div>
@@ -88,6 +96,7 @@ const Navbar = () => {
               <Button
                 size="sm"
                 className="rounded-full bg-primary text-white hover:bg-primary/90"
+                onClick={handleSignUp}
               >
                 Sign Up
               </Button>
@@ -126,7 +135,7 @@ const Navbar = () => {
                   <button className="w-6 h-6 text-primary">
                     <Heart className="w-full h-full" strokeWidth={1.5} />
                   </button>
-                  <button className="w-6 h-6 text-primary">
+                  <button onClick={handleCart} className="w-6 h-6 text-primary">
                     <ShoppingBag className="w-full h-full" strokeWidth={1.5} />
                   </button>
                 </div>

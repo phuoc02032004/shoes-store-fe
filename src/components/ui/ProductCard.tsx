@@ -5,7 +5,7 @@ import { Button } from './button';
 interface ProductCardProps {
   image: string;
   name: string;
-  price: string;
+  price: string | number;
   discountedPrice?: string;
   discount?: string;
   rating?: string;

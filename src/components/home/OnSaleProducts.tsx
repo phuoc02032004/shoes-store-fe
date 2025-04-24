@@ -1,39 +1,9 @@
 import Image from 'next/image';
 import ProductCard from '../ui/ProductCard';
+import { productsMock } from '@/mocks/productmock';
 
 const OnSaleProducts = () => {
-  const products = [
-    {
-      image: '/images/products/sale-1.jpg',
-      name: 'Vantela Ethnic Low Black Natural',
-      price: 'Rp 319.600',
-      discountedPrice: 'Rp 159.800',
-      discount: 'Disc 50%',
-      rating: '5/5',
-      showShopNow: true,
-    },
-    {
-      image: '/images/products/sale-2.jpg',
-      name: 'Vantela Ethnic Low Black Natural',
-      price: 'Rp 259.600',
-      discountedPrice: 'Rp 181.720',
-      discount: 'Disc 30%',
-    },
-    {
-      image: '/images/products/sale-3.jpg',
-      name: 'Vantela Ethnic Low Black Natural',
-      price: 'Rp 300.600',
-      discountedPrice: 'Rp 195.390',
-      discount: 'Disc 35%',
-    },
-    {
-      image: '/images/products/sale-4.jpg',
-      name: 'Vantela Ethnic Low Black Natural',
-      price: 'Rp 280.600',
-      discountedPrice: 'Rp 182.390',
-      discount: 'Disc 30%',
-    },
-  ];
+  const products = productsMock;
 
   return (
     <section className="py-8 md:py-12 lg:py-20 bg-white">
@@ -75,7 +45,14 @@ const OnSaleProducts = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {products.map((product, index) => (
             <div key={index} className="transform transition-transform hover:scale-[1.02] duration-300">
-              <ProductCard {...product} />
+              <ProductCard 
+                image={product.image}
+                name={product.name}
+                price={product.price}
+                rating={product.rating}
+                showShopNow={true} 
+                discountedPrice={product.discountedPrice}
+                />
             </div>
           ))}
         </div>

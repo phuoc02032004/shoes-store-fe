@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Pacifico, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { CartProvider } from "@/context/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
+const pacifico = Pacifico({ subsets: ['latin'], weight: '400' });
+const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
 export const metadata: Metadata = {
   title: "Vantela - Step Into Style, Run With Confidence",
@@ -19,15 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
-          rel="stylesheet"
-        />
       </head>
-      <body className={inter.className}>
-        <Navbar />
-        {children}
-        <Footer />
+      <body className={`${inter.className} ${pacifico.className} ${poppins.className}`}>
+        <CartProvider>
+          <Navbar />
+          <main className="flex-grow">{children}</main> {/* Added main tag for semantic structure */}
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
