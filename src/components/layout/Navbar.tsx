@@ -1,19 +1,24 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import Link from 'next/link';
 import { Heart, ShoppingBag, User, Menu, X } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '../ui/button'; // Corrected import path
 import { useRouter } from 'next/navigation';
+
+import { usePathname } from 'next/navigation';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const Router = useRouter();
 
+  // TODO: Replace with actual authentication state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const navItems = [
-    { name: 'Home', href: '/', active: true },
-    { name: 'Sneakers', href: '/sneakers' },
-    { name: 'Slip On', href: '/slip-on' },
+    { name: 'Home', href: '/' },
+    { name: 'Sneakers', href: '/sneakers' }, // Corrected href
+    { name: 'Slip On', href: '/slipon' },
     { name: 'Sandals', href: '/sandals' },
     { name: 'Other', href: '/other' },
   ];
@@ -30,6 +35,17 @@ const Navbar = () => {
     Router.push('/cart');
   };
 
+  // Check local storage for auth token on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const authToken = localStorage.getItem('authToken'); // Assuming 'authToken' is the key
+      setIsLoggedIn(!!authToken); // Set isLoggedIn based on whether authToken exists
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+
+  const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100">
       <nav className="container mx-auto px-4 h-20">
@@ -41,7 +57,7 @@ const Navbar = () => {
           </Link>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="lg:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
@@ -59,10 +75,10 @@ const Navbar = () => {
                 <Link
                   href={item.href}
                   className={`px-2 py-2 text-sm ${
-                    item.active
-                      ? 'font-bold text-primary'
-                      : 'text-gray-500 hover:text-gray-900'
-                  }`}
+                    pathname === item.href
+                      ? 'font-bold text-primary' // Active link style
+                       : 'text-gray-500 hover:text-gray-900'
+                   }`}
                 >
                   {item.name}
                 </Link>
@@ -73,33 +89,36 @@ const Navbar = () => {
           {/* Action Buttons - Desktop */}
           <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center gap-4">
-              <button className="w-6 h-6 text-primary">
-                <User className="w-full h-full" />
-              </button>
+              {/* User Icon or Sign In/Sign Up Buttons */}
+              {isLoggedIn ? (
+                <button className="w-6 h-6 text-primary">
+                  <User className="w-full h-full" />
+                </button>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full border-primary text-primary hover:bg-primary/5"
+                    onClick={handleSignIn}
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="rounded-full bg-primary text-white hover:bg-primary/90"
+                    onClick={handleSignUp}
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              )}
               <button className="w-6 h-6 text-primary">
                 <Heart className="w-full h-full" strokeWidth={1.5} />
               </button>
-              <button  onClick={handleCart} className="w-6 h-6 text-primary">
+              <button onClick={handleCart} className="w-6 h-6 text-primary">
                 <ShoppingBag className="w-full h-full" strokeWidth={1.5} />
               </button>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full border-primary text-primary hover:bg-primary/5"
-                onClick={handleSignIn}
-              >
-                Sign In
-              </Button>
-              <Button
-                size="sm"
-                className="rounded-full bg-primary text-white hover:bg-primary/90"
-                onClick={handleSignUp}
-              >
-                Sign Up
-              </Button>
             </div>
           </div>
         </div>
@@ -114,8 +133,8 @@ const Navbar = () => {
                     <Link
                       href={item.href}
                       className={`block px-2 py-3 text-lg ${
-                        item.active
-                          ? 'font-bold text-primary'
+                        pathname === item.href
+                          ? 'font-bold text-primary' // Active link style
                           : 'text-gray-500 hover:text-gray-900'
                       }`}
                       onClick={() => setIsMenuOpen(false)}
@@ -128,34 +147,37 @@ const Navbar = () => {
 
               {/* Mobile Action Buttons */}
               <div className="mt-6 flex flex-col gap-4">
-                <div className="flex justify-center gap-8">
-                  <button className="w-6 h-6 text-primary">
-                    <User className="w-full h-full" />
-                  </button>
-                  <button className="w-6 h-6 text-primary">
-                    <Heart className="w-full h-full" strokeWidth={1.5} />
-                  </button>
-                  <button onClick={handleCart} className="w-6 h-6 text-primary">
-                    <ShoppingBag className="w-full h-full" strokeWidth={1.5} />
-                  </button>
-                </div>
-
-                <div className="flex flex-col gap-3 mt-4">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full rounded-full border-primary text-primary hover:bg-primary/5"
-                    onClick={handleSignIn}
-                  >
-                    Sign In
-                  </Button>
-                  <Button
-                    size="lg"
-                    className="w-full rounded-full bg-primary text-white hover:bg-primary/90"
-                  >
-                    Sign Up
-                  </Button>
-                </div>
+                {isLoggedIn ? (
+                  <div className="flex justify-center">
+                    <button className="w-6 h-6 text-primary">
+                      <User className="w-full h-full" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full rounded-full border-primary text-primary hover:bg-primary/5"
+                      onClick={handleSignIn}
+                    >
+                      Sign In
+                    </Button>
+                    <Button
+                      size="lg"
+                      className="w-full rounded-full bg-primary text-white hover:bg-primary/90"
+                      onClick={handleSignUp}
+                    >
+                      Sign Up
+                    </Button>
+                  </div>
+                )}
+                <button className="w-6 h-6 text-primary">
+                  <Heart className="w-full h-full" strokeWidth={1.5} />
+                </button>
+                <button onClick={handleCart} className="w-6 h-6 text-primary">
+                  <ShoppingBag className="w-full h-full" strokeWidth={1.5} />
+                </button>
               </div>
             </div>
           </div>

@@ -2,13 +2,19 @@ import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { Button } from './button';
 
+const formatPrice = (amount: number): string => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  }).format(amount);
+};
+
 interface ProductCardProps {
   image: string;
   name: string;
-  price: string | number;
-  discountedPrice?: string;
-  discount?: string;
-  rating?: string;
+  price: number;
+  discountedPrice?: number;
+  rating?: number;
   showShopNow?: boolean;
 }
 
@@ -17,64 +23,77 @@ const ProductCard = ({
   name,
   price,
   discountedPrice,
-  discount,
   rating,
-  showShopNow,
+  showShopNow = true,
 }: ProductCardProps) => {
+
+  const hasDiscount = typeof discountedPrice === 'number' && discountedPrice < price;
+  const discountPercentage = hasDiscount
+    ? Math.round(((price - discountedPrice!) / price) * 100)
+    : 0;
+
+  const displayPrice = hasDiscount ? formatPrice(discountedPrice!) : formatPrice(price);
+  const originalPriceDisplay = hasDiscount ? formatPrice(price) : null;
+
   return (
-    <div className="relative group">
-      {/* Card Container */}
-      <div className="border border-[#F4F4F4] rounded-[6px] p-2 sm:p-[12px]">
-        {/* Image Container */}
-        <div className="relative aspect-square mb-3 sm:mb-6">
-          <Image
-            src={image}
-            alt={name}
-            fill
-            className="object-cover rounded-[3px]"
-          />
-          {discount && (
-            <span className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-[#FFB800] text-black text-[10px] sm:text-[11px] font-semibold px-2 sm:px-[12px] py-1 sm:py-[6px] rounded-[25px]">
-              {discount}
-            </span>
+    <div className="relative group border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+      <div className="relative aspect-square overflow-hidden">
+        <Image
+          src={image || '/placeholder-image.png'}
+          alt={name}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+
+        {hasDiscount && discountPercentage > 0 && (
+          <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full z-10">
+            -{discountPercentage}%
+          </span>
+        )}
+
+        <div
+          className="absolute inset-0 flex flex-col justify-between p-2 sm:p-3 bg-black/60 backdrop-blur-sm
+                     opacity-0 transition-opacity duration-300
+                     group-hover:opacity-100 group-focus-within:opacity-100"
+        >
+          {rating && rating > 0 ? (
+            <div className="flex items-center gap-1 self-start bg-white/80 px-1.5 py-0.5 rounded-full">
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-500" />
+              <span className="text-[10px] sm:text-xs font-medium text-black">{rating.toFixed(1)}</span>
+            </div>
+          ) : (
+            <div></div>
           )}
 
-          {/* Hover Content - Only shows on group hover */}
-          <div className="absolute inset-0 flex flex-col justify-between p-3 sm:p-[18px] bg-white/80 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            {/* Rating - Top */}
-            {rating && (
-              <div className="flex items-center gap-1 sm:gap-1.5">
-                <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-[#FFB800] text-[#FFB800]" />
-                <span className="text-[10px] sm:text-[12px] font-medium text-black">{rating}</span>
-              </div>
-            )}
-
-            {/* Shop Now Button - Bottom */}
-            {showShopNow && (
+          {showShopNow && (
+            <div className="flex justify-center">
               <Button
-                className="w-fit mx-auto bg-primary text-white rounded-[30px] text-[10px] sm:text-[10.6px] px-2 sm:px-3 py-1 sm:py-1.5"
+                variant="default"
+                size="sm"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full text-[10px] sm:text-xs px-3 py-1 h-auto"
+                tabIndex={-1}
               >
                 Shop Now
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* Content */}
-        <div className="space-y-2 sm:space-y-3 px-1 sm:px-[6px]">
-          <h3 className="text-[14px] sm:text-[18px] font-semibold leading-[1.21] text-black line-clamp-2">
-            {name}
-          </h3>
-          <div className="space-y-1 sm:space-y-1.5">
-            {discountedPrice ? (
-              <>
-                <p className="text-[10px] sm:text-[12px] text-gray-500 line-through">{price}</p>
-                <p className="text-[12px] sm:text-[15px] text-black">{discountedPrice}</p>
-              </>
-            ) : (
-              <p className="text-[10px] sm:text-[12px] text-black">{price}</p>
-            )}
-          </div>
+      <div className="p-2 sm:p-3 space-y-1 sm:space-y-1.5">
+        <h3 className="text-sm sm:text-base font-semibold leading-tight text-gray-800 line-clamp-2" title={name}>
+          {name}
+        </h3>
+        <div className="flex flex-col items-start">
+          {originalPriceDisplay && (
+            <p className="text-xs sm:text-sm text-gray-500 line-through">
+              {originalPriceDisplay}
+            </p>
+          )}
+          <p className={`text-sm sm:text-base font-bold ${hasDiscount ? 'text-red-600' : 'text-gray-900'}`}>
+            {displayPrice}
+          </p>
         </div>
       </div>
     </div>

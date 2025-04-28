@@ -5,7 +5,7 @@ import { getProducts,  } from "@/api/product";
 import { getCategories } from "@/api/category";
 import { Product, Category } from "@/types/products";
 
-export default async function Sneakers() {
+export default async function Sandals() {
     let menProducts: Product[] = [];
     let kidProducts: Product[] = [];
     let womenProducts: Product[] = [];

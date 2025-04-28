@@ -1,10 +1,48 @@
-  import React from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { Login } from '@/api/auth';
 
 const SignInForm = () => {
+  const [, setIsLoading] = React.useState(false);
+  const [, setError] = React.useState<string | null>(null);
+
+  const router = useRouter();
+
+  const [formdateta, setFormdateta] = React.useState({
+    email: '',
+    password: '',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    // Simulate an API call
+    try {
+      // Replace with your actual sign-in logic
+      const response = await Login(formdateta.email, formdateta.password);
+      if (response.status === 200) {
+        // Handle successful sign-in (e.g., redirect to dashboard)
+        console.log('Sign-in successful:', response.data);
+        router.push('/home'); // Redirect to dashboard or home page
+        setIsLoading(false);
+      }
+      else {
+        setError('Invalid credentials. Please try again.');
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Sign-in error:', error);
+      setError('Sign-in failed. Please try again.');
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <div className="flex flex-col  px-4 py-8 lg:px-8 w-auto">
+    <form onSubmit={handleSubmit} className="flex flex-col  px-4 py-8 lg:px-8 w-auto">
       <div className="w-full items-center justify-center">
         <div className="grid w-full items-center justify-center grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mb-6">
           <div className=''>
@@ -17,6 +55,7 @@ const SignInForm = () => {
               id="email"
               type="text"
               placeholder="Aziz sultan" // Placeholder from Figma Frame 152:15
+              onChange={(e) => setFormdateta({...formdateta, email: e.target.value})}
             />
           </div>
           {/* Password Input */}
@@ -31,15 +70,17 @@ const SignInForm = () => {
               id="password"
               type="password"
               placeholder="Inimail@mail.com" // Placeholder from Figma Frame 152:8
+              onChange={(e) => setFormdateta({...formdateta, password: e.target.value})}
             />
           </div>
         </div>
 
         {/* Sign In Button - Frame 156:201 */}
         <div className="mb-6 mt-8"> {/* Adjusted margins */}
+
           <button
             className="bg-[#1F3E97] hover:bg-blue-800 text-white text-xl font-semibold py-[16px] px-[64px] rounded-lg focus:outline-none focus:shadow-outline w-full" // Styles from Figma: bg, text style, padding, border-radius. Using w-full instead of fixed width.
-            type="button"
+            type="submit"
           >
             Sign In
           </button>
@@ -56,7 +97,7 @@ const SignInForm = () => {
             </Link>
             {/* Don't have account: style_TRK9RZ */}
             <p className="text-[#000000]">
-                Don&apos;t have an account yet ?
+                Don &apos; t have an account yet ?
                 {/* Sign Up link kept from previous context, styled like Forgot Password */}
                 <Link href="/signup" className="font-semibold text-[#1F3E97] hover:text-blue-800 ml-1">
                 Sign Up
@@ -91,8 +132,8 @@ const SignInForm = () => {
         </div>
 
       </div>
-    </div>
-  );
+  </form>
+    );
 };
 
 export default SignInForm;

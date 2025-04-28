@@ -17,7 +17,7 @@ export default function Signup() {
       </div>
 
 
-      <div className="hidden lg:flex lg:w-1/2 relative h-auto bg-[#F4F4F4]">
+      <div className="hidden lg:flex lg:w-1/2 relative h-auto bg-[#F4F4F4] ml-10 mb-10">
         <Image
           src="/images/auth/signin/signin-bg.jpg"
           alt="Fast shipping"

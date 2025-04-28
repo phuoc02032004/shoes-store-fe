@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <head>
       </head>
-      <body className={`${inter.className} ${pacifico.className} ${poppins.className}`}>
+      <body className={`${inter.className} ${pacifico.className} ${poppins.className} bg-white`}>
         <CartProvider>
           <Navbar />
           <main className="flex-grow">{children}</main> {/* Added main tag for semantic structure */}
