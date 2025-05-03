@@ -9,7 +9,8 @@ import { getProductById } from '@/api/product';
 import { getSizeById } from '@/api/size';       
 import { Product } from '@/types/products';   
 import { Size } from '@/types/sizes';         
-import { useCart } from '@/context/CartContext'; 
+import { addToCart } from '@/api/cart';
+import { CartItem } from '@/types/cart';
 
 const ShareIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" /></svg>;
 const LikeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>;
@@ -29,7 +30,7 @@ const formatPrice = (amount?: number): string => {
 const DetailPage = () => {
   const params = useParams();
   const productId = params.id as string;
-  const cart = useCart(); 
+  const [, setCart] = useState<CartItem[]>([]);
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,21 +105,22 @@ const DetailPage = () => {
   const hasDiscount = typeof product?.discountedPrice === 'number' && (product?.discountedPrice || 0) < (product?.price || 0);
 
   const handleAddToCart = () => {
-    if (!product) {
-        alert('Product data is not loaded yet.');
-        return;
+    if (product && selectedSize) {
+      addToCart(product.id, 1, String(selectedSize))
+        .then((response) => {
+          setCart((prevCart) => [...prevCart, response.data]);
+          setSelectedSize(null); 
+          alert("Product added to cart successfully!");
+        })
+        .catch((error) => {
+          console.error("Failed to add item to cart:", error);
+          setError("Could not add item to cart. Please try again later.");
+        });
+        console.log("Product added to cart:", product.id, selectedSize);
+    } else {
+      setError("Please select a size before adding to cart.");
     }
-    if (sizeDetails.length > 0 && selectedSize === null) {
-        alert('Please select a size.');
-        return;
-    }
-
-    const selectedSizeObject = sizeDetails.find(size => size.id === selectedSize);
-    const selectedSizeValue = selectedSizeObject ? selectedSizeObject.value : 'N/A'; 
-
-    cart.addToCart(product, selectedSize !== null ? selectedSize.toString() : undefined);
-
-    alert(`${product.name} (Size: ${selectedSizeValue}) added to cart!`);
+   
   };
 
   if (loading) {

@@ -22,7 +22,8 @@ cartApi.interceptors.request.use(
 
 const getCart = async (): Promise<AxiosResponse> => {
   try {
-    const response = await cartApi.get('/api/cart');
+    const response = await cartApi.get('/cart');
+    console.log('Get cart response:', response.data);
     return response;
   } catch (error) {
     console.error('Get cart error:', error);
@@ -30,11 +31,12 @@ const getCart = async (): Promise<AxiosResponse> => {
   }
 };
 
-const addToCart = async (productId: string, quantity: number): Promise<AxiosResponse> => {
+const addToCart = async (productId: string, quantity: number, sizeId: string): Promise<AxiosResponse> => {
   try {
-    const response = await cartApi.post('/cart', {
+    const response = await cartApi.post('/cart/items', {
       productId,
       quantity,
+      sizeId,
     });
     return response;
   } catch (error) {
@@ -43,9 +45,9 @@ const addToCart = async (productId: string, quantity: number): Promise<AxiosResp
   }
 };
 
-const updateCartItem = async (itemId: string, quantity: number): Promise<AxiosResponse> => {
+const updateCartItem = async (sizeId: string, quantity: number, productId: string): Promise<AxiosResponse> => {
   try {
-    const response = await cartApi.put(`/cart/${itemId}`, {
+    const response = await cartApi.put(`/cart/items/${productId}/${sizeId}`, {
       quantity,
     });
     return response;
@@ -65,4 +67,15 @@ const deleteCartItem = async (itemId: string): Promise<AxiosResponse> => {
   }
 };
 
-export { getCart, addToCart, updateCartItem, deleteCartItem };
+const removeItemFromCart = async (productId: string,itemId: string): Promise<AxiosResponse> => {
+  try {
+    const response = await cartApi.delete(`/cart/items/${productId}/${itemId}`);
+    return response;
+  }
+  catch (error) {
+    console.error('Remove item from cart error:', error);
+    throw error;
+  }
+};
+
+export { getCart, addToCart, updateCartItem, deleteCartItem, removeItemFromCart };
