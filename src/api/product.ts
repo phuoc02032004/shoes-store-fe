@@ -12,6 +12,7 @@ interface GetProductsParams {
   sortBy?: string;
   order?: 'asc' | 'desc';
   isOnSale?: boolean;
+  isPopular?: boolean;
 }
 
 const productApi: AxiosInstance = axios.create({

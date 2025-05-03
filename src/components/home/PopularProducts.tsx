@@ -13,7 +13,7 @@ const PopularProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await getProducts({ isOnSale: true });
+        const response = await getProducts({ isPopular: true });
         setProducts(response?.data || []);
       } catch (err) {
         console.error("Failed to fetch products:", err);
@@ -36,7 +36,7 @@ const PopularProducts = () => {
           
           {/* Title */}
           <h2 className="absolute left-4 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 text-lg sm:text-xl md:text-2xl font-medium text-primary">
-            On Sale
+          Popular
           </h2>
 
           {/* Navigation Arrows */}

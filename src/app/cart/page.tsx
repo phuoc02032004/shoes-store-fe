@@ -198,7 +198,7 @@ export default function CartPage() {
                                     </div>
 
                                     {/* Quantity Selector */}
-                                    <div className="flex items-center border border-gray-300 rounded-full p-1 space-x-2 self-start sm:self-center mt-2 sm:mt-0">
+                                    <div className="flex items-center border border-gray-300 rounded-full p-1 space-x-2 self-center mt-2 sm:mt-0">
                                         <button
                                             className="text-blue-600 hover:bg-gray-100 rounded-full p-1 disabled:opacity-50 disabled:cursor-not-allowed"
                                             disabled={item.quantity <= 1}
@@ -223,7 +223,7 @@ export default function CartPage() {
 
                     {/* Order Summary Section (Right Column) */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4 sticky top-24"> {/* Added sticky */}
+                        <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4 lg:sticky lg:top-24"> {/* Added sticky */}
                             <h2 className="text-xl font-medium text-black">Order Summary</h2>
 
                             {/* Promo Code (UI only) */}

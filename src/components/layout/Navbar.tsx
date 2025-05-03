@@ -132,7 +132,7 @@ const Navbar = () => {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className={`block px-2 py-3 text-lg ${
+                      className={`block px-2 py-3 text-lg text-center ${
                         pathname === item.href
                           ? 'font-bold text-primary' // Active link style
                           : 'text-gray-500 hover:text-gray-900'
@@ -146,7 +146,7 @@ const Navbar = () => {
               </ul>
 
               {/* Mobile Action Buttons */}
-              <div className="mt-6 flex flex-col gap-4">
+              <div className="mt-6 flex flex-col gap-4 items-center">
                 {isLoggedIn ? (
                   <div className="flex justify-center">
                     <button className="w-6 h-6 text-primary">
