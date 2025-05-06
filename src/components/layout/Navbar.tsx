@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react'; // Import useEffect
+import React, { useState, useEffect } from 'react'; 
 import Link from 'next/link';
 import { Heart, ShoppingBag, User, Menu, X } from 'lucide-react';
-import { Button } from '../ui/button'; // Corrected import path
+import { Button } from '../ui/button'; 
 import { useRouter } from 'next/navigation';
 
 import { usePathname } from 'next/navigation';
@@ -12,12 +12,11 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const Router = useRouter();
 
-  // TODO: Replace with actual authentication state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const navItems = [
     { name: 'Home', href: '/' },
-    { name: 'Sneakers', href: '/sneakers' }, // Corrected href
+    { name: 'Sneakers', href: '/sneakers' }, 
     { name: 'Slip On', href: '/slipon' },
     { name: 'Sandals', href: '/sandals' },
     { name: 'Other', href: '/other' },
@@ -35,13 +34,17 @@ const Navbar = () => {
     Router.push('/cart');
   };
 
-  // Check local storage for auth token on mount
+  const handleMe = () => {
+    Router.push('/me');
+  };
+
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const authToken = localStorage.getItem('authToken'); // Assuming 'authToken' is the key
-      setIsLoggedIn(!!authToken); // Set isLoggedIn based on whether authToken exists
+      const authToken = localStorage.getItem('token');
+      setIsLoggedIn(!!authToken); 
     }
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []); 
 
 
   const pathname = usePathname();
@@ -76,7 +79,7 @@ const Navbar = () => {
                   href={item.href}
                   className={`px-2 py-2 text-sm ${
                     pathname === item.href
-                      ? 'font-bold text-primary' // Active link style
+                      ? 'font-bold text-primary' 
                        : 'text-gray-500 hover:text-gray-900'
                    }`}
                 >
@@ -89,10 +92,9 @@ const Navbar = () => {
           {/* Action Buttons - Desktop */}
           <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center gap-4">
-              {/* User Icon or Sign In/Sign Up Buttons */}
               {isLoggedIn ? (
                 <button className="w-6 h-6 text-primary">
-                  <User className="w-full h-full" />
+                  <User className="w-full h-full" onClick={handleMe}/>
                 </button>
               ) : (
                 <div className="flex items-center gap-3">
@@ -150,7 +152,7 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <div className="flex justify-center">
                     <button className="w-6 h-6 text-primary">
-                      <User className="w-full h-full" />
+                      <User className="w-full h-full" onClick={handleMe}/>
                     </button>
                   </div>
                 ) : (

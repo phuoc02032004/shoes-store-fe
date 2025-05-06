@@ -41,7 +41,18 @@ const createZaloPay = async (orderId: string): Promise<AxiosResponse> => {
     }
 }
 
-export { createOrder, createZaloPay };
+const getMyOrders = async (): Promise<AxiosResponse> => {
+    try {
+        const response = await orderApi.get('/orders/myorders');
+        return response;
+    }
+    catch (error) {
+        console.error('Get my orders error:', error);
+        throw error;
+    }
+}
+
+export { createOrder, createZaloPay, getMyOrders };
 
 
 
