@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation'; // Import useRouter
 import Link from 'next/link';
 
 import { getProductById } from '@/api/product'; 
@@ -30,6 +30,7 @@ const formatPrice = (amount?: number): string => {
 const DetailPage = () => {
   const params = useParams();
   const productId = params.id as string;
+  const router = useRouter(); // Initialize router
   const [, setCart] = useState<CartItem[]>([]);
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -105,22 +106,59 @@ const DetailPage = () => {
   const hasDiscount = typeof product?.discountedPrice === 'number' && (product?.discountedPrice || 0) < (product?.price || 0);
 
   const handleAddToCart = () => {
+    // Check if user is logged in (assuming token is stored in localStorage)
+    const authToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    if (!authToken) {
+      setError("Please log in to add items to your cart.");
+      router.push('/signin')
+      return; // Stop execution if not logged in
+    }
+
+    // Proceed if logged in
     if (product && selectedSize) {
+      setError(null); // Clear previous errors
       addToCart(product.id, 1, String(selectedSize))
         .then((response) => {
           setCart((prevCart) => [...prevCart, response.data]);
-          setSelectedSize(null); 
-          alert("Product added to cart successfully!");
+          setSelectedSize(null);
+          alert("Product added to cart successfully!"); // Consider using a less intrusive notification
         })
         .catch((error) => {
           console.error("Failed to add item to cart:", error);
-          setError("Could not add item to cart. Please try again later.");
+          // Check if the error is due to authentication (e.g., 401 Unauthorized)
+          if (error.response && error.response.status === 401) {
+             setError("Your session may have expired. Please log in again.");
+             // Optionally clear token and redirect:
+             // localStorage.removeItem('authToken');
+             // router.push('/signin?redirect=/sandals/' + productId);
+          } else {
+             setError("Could not add item to cart. Please try again later.");
+          }
         });
         console.log("Product added to cart:", product.id, selectedSize);
+    } else if (product && sizeDetails.length > 0 && !selectedSize) {
+       setError("Please select a size before adding to cart.");
+    } else if (product && sizeDetails.length === 0) {
+       // Handle case where product has no sizes - directly add to cart?
+       setError(null); // Clear previous errors
+       addToCart(product.id, 1, '') // Assuming empty string or null for sizeId if no sizes
+         .then((response) => {
+           setCart((prevCart) => [...prevCart, response.data]);
+           alert("Product added to cart successfully!");
+         })
+         .catch((error) => {
+           console.error("Failed to add item to cart:", error);
+           if (error.response && error.response.status === 401) {
+              setError("Your session may have expired. Please log in again.");
+           } else {
+              setError("Could not add item to cart. Please try again later.");
+           }
+         });
+         console.log("Product added to cart:", product.id, 'no size');
     } else {
-      setError("Please select a size before adding to cart.");
+       setError("Cannot add product to cart."); // General error if product is null
     }
-   
   };
 
   if (loading) {

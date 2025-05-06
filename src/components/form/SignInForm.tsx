@@ -6,7 +6,7 @@ import { Login } from '@/api/auth';
 
 const SignInForm = () => {
   const [, setIsLoading] = React.useState(false);
-  const [, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   const router = useRouter();
 
@@ -74,7 +74,14 @@ const SignInForm = () => {
             />
           </div>
         </div>
-
+ 
+        {/* Error Message Display */}
+        {error && (
+          <div className="mb-4 text-red-500 text-sm text-center">
+            {error}
+          </div>
+        )}
+ 
         {/* Sign In Button - Frame 156:201 */}
         <div className="mb-6 mt-8"> {/* Adjusted margins */}
 

@@ -12,6 +12,16 @@ interface OrderHistoryProps {
 
 const ORDERS_PER_PAGE = 10; 
 
+const formatVND = (amount?: number): string => {
+  if (typeof amount !== 'number') return 'N/A'; 
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    minimumFractionDigits: 0, 
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
 const OrderHistory: React.FC<OrderHistoryProps> = ({ orders, loading, error }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -75,7 +85,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ orders, loading, error }) =
               <p className="text-gray-700">
                 <span className="font-medium">Total:</span>
                 <span className="font-semibold text-gray-900 ml-2">
-                  ${order.totalPrice.toFixed(2)}
+                  {formatVND(order.totalPrice)}
                 </span>
               </p>
               {/* <Button size="sm" variant="outline" className="mt-2">View Details</Button> */}
