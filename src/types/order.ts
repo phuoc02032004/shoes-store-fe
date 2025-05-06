@@ -1,7 +1,7 @@
 export interface Order{
-    id: number;
+    _id: string;
     user: string;
-    items: OrderItem[];
+    orderItems: OrderItem[];
     shippingAddress: ShippingAddress;
     paymentMethod: string;
     itemsPrice: number;
@@ -25,6 +25,7 @@ export interface OrderItem{
     quantity: number;
     size: string;
     id: string;
+    _id: string;
 }
 
 export interface ShippingAddress{

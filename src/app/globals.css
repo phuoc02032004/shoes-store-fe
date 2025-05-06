@@ -19,3 +19,14 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ẩn scrollbar cho trình duyệt Webkit (Chrome, Safari, Edge mới) */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ẩn scrollbar cho IE, Edge cũ và Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

@@ -1,8 +1,10 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
+import { formatVND } from '@/lib/utils';
 import { Order } from '@/types/order';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import OrderDetailModal from './OrderDetailModal';
 
 interface OrderHistoryProps {
   orders: Order[];
@@ -10,20 +12,12 @@ interface OrderHistoryProps {
   error: Error | null;
 }
 
-const ORDERS_PER_PAGE = 10; 
-
-const formatVND = (amount?: number): string => {
-  if (typeof amount !== 'number') return 'N/A'; 
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    minimumFractionDigits: 0, 
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
+const ORDERS_PER_PAGE = 5; 
 
 const OrderHistory: React.FC<OrderHistoryProps> = ({ orders, loading, error }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [, setIsModalOpen] = useState(false);
 
   if (loading) {
     return (
@@ -63,16 +57,25 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ orders, loading, error }) =
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
-  // --- Render Orders and Pagination ---
+  const handleDetails = (orderId: string) => {
+    setSelectedOrderId(orderId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrderId(null); // Clear selected order when modal closes
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3">Order History</h2>
       <div className="space-y-6">
-        {currentOrders.map((order) => ( // Map over currentOrders
-          <Card key={order.id} className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+        {currentOrders.map((order) => ( 
+          <Card key={order._id} className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
             <CardHeader className="bg-gray-50 text-black p-4 border-b">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-lg">Order #{order.id}</CardTitle>
+                <CardTitle className="text-lg">Order #{order._id}</CardTitle>
                 <Badge variant={order.orderStatus === 'COMPLETED' ? 'default' : 'secondary'}>
                   {order.orderStatus || 'PROCESSING'}
                 </Badge>
@@ -88,7 +91,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ orders, loading, error }) =
                   {formatVND(order.totalPrice)}
                 </span>
               </p>
-              {/* <Button size="sm" variant="outline" className="mt-2">View Details</Button> */}
+              <Button size="sm" variant="outline" className="mt-2 text-black" onClick={() => handleDetails(order._id)}>View Details</Button>
             </CardContent>
           </Card>
         ))}
@@ -102,6 +105,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ orders, loading, error }) =
             disabled={currentPage === 1}
             variant="outline"
             size="sm"
+            className='text-black'
+
           >
             Previous
           </Button>
@@ -113,11 +118,18 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ orders, loading, error }) =
             disabled={currentPage === totalPages}
             variant="outline"
             size="sm"
+            className='text-black'
           >
             Next
           </Button>
         </div>
       )}
+
+      {/* Order Detail Modal */}
+      <OrderDetailModal
+        orderId={selectedOrderId}
+        onClose={closeModal}
+      />
     </div>
   );
 };
