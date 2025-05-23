@@ -24,6 +24,7 @@ const SignInForm = () => {
     try {
       // Replace with your actual sign-in logic
       const response = await Login(formdateta.email, formdateta.password);
+      console.log(response)
       if (response.status === 200) {
         // Handle successful sign-in (e.g., redirect to dashboard)
         console.log('Sign-in successful:', response.data);
